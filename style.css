@@ -1,0 +1,290 @@
+*{
+	padding: 0;
+	margin: 0;
+	font-family: 'Roboto', sans-serif;
+	line-height:1.2;
+	-webkit-tap-highlight-color: rgba(255,255,255,0);
+}
+
+html, body{
+	height: 100%;
+	position:relative;
+	transform-origin:center 3rem;
+	transition:transform .3s;
+}
+body{
+  background: #EDEDED;
+}
+
+::selection {
+    color: white; 
+    background: #00427B;
+}
+
+header ::-moz-selection, section.status ::-moz-selection { /* Code for Firefox */
+    color: white;
+    background: #68FFDF;
+}
+
+header ::selection, section.status ::selection {
+    color: white; 
+    background: #68FFDF;
+}
+
+header {
+  height: 56px;
+  background: #00325A;
+  color: white;
+  position: fixed;
+  width: 100%;
+  box-shadow: 0 0 5px rgba(0,0,0,.8);
+}
+
+header .wrapper {
+  line-height: 64px;
+  padding: 0 20px;
+}
+
+section.status {
+  background: #00427B;
+  color: white;
+  padding-top: 56px;
+}
+
+section.paper {
+  background: white;
+}
+section.paper {
+  max-width: 1140px;
+  margin: 25px auto;
+  border-radius: 2px;
+  box-shadow: 0 0 3px 0 rgba(0,0,0,.12),0 1px 2px 0 rgba(0,0,0,.24);
+}
+section strong {
+  color: #68FFDF;
+  font-weight: normal;
+}
+body section:last-child {
+  margin-bottom: 70px;
+}
+
+.wrapper {
+  max-width: 1100px;
+  padding: 15px 20px;
+  margin: auto;
+}
+table{
+  width: 100%;
+  border-collapse: collapse;
+  color: #212121;
+}
+tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+td, th {
+  text-align: left;
+  padding: 10px;
+  white-space: nowrap;
+}
+tr td:first-child, tr th:first-child {
+  padding-left: 0;
+}
+tr td:last-child, tr th:last-child {
+  padding-right: 0;
+}
+table tr:last-child {
+  border: 0;
+}
+table tr:last-child td {
+  padding-bottom: 0;
+}
+
+.on:before, .off:before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.off:before {
+  background: #ccc;
+}
+
+.on:before {
+  background: #00E676;
+}
+
+h1,h2 {
+  font-weight: normal;
+  line-height: 1.7em;
+  display: inline;
+}
+h1 {
+  font-size: 20px;
+  line-height: 56px;
+  margin-left: -5px;
+  vertical-align: super;
+}
+h1 a {
+  color: white;
+  text-decoration: none;
+  padding: 5px;
+  border-radius: 3px;
+}
+h1 a:hover{
+  background: rgba(0,0,0,.3);
+}
+h2 {
+  font-size: 18px;
+}
+h3, th {
+  font-weight: 500;
+}
+h3 {
+  padding-bottom: 10px;
+}
+
+td a {
+  background: #eee;
+  padding: 5px 10px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px #CFCFCF;
+  transition: box-shadow .2s;
+  color: #000;
+  text-decoration: none;
+}
+td a:hover {
+  box-shadow: 0 2px 6px #C0C0C0;
+}
+
+.ip {
+	color: #777;
+}
+
+form {
+	padding: 30px 0 20px;
+}
+input[type="submit"] {
+  border: 0;
+  height: 30px;
+  width: 120px;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.7);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media  only screen and (max-width: 1400px)  {
+  section.paper {
+    max-width: 100%;
+    border-radius: 0;
+    margin: 0;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 6px -2px rgba(0,0,0,.5);
+  }
+}
+
+@media  only screen and (max-width: 1030px)  {
+	.hide {
+		display: none;
+	}
+}
+
+/* form starting stylings ------------------------------- */
+.group 			  { 
+  position:relative; 
+  margin-bottom:20px; 
+}
+input[type="text"], input[type="password"] 				{
+  font-size:18px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:300px;
+  border:none;
+  border-bottom:1px solid white;
+  background: transparent;
+  color: white;
+}
+input:focus 		{ outline:none; }
+
+/* LABEL ======================================= */
+label 				 {
+  color: white; 
+  font-size:18px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  top:10px;
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+input[type="text"]:focus ~ label, input[type="text"]:valid ~ label, input[type="password"]:focus ~ label, input[type="password"]:valid ~ label 		{
+  top:-20px;
+  left: 0px;
+  font-size:14px;
+  color:#68FFDF;
+}
+
+/* BOTTOM BARS ================================= */
+.bar 	{ position:relative; display:block; width:315px; }
+.bar:before, .bar:after 	{
+  content:'';
+  height:2px; 
+  width:0;
+  bottom:0; 
+  position:absolute;
+  background:#68FFDF; 
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%; 
+}
+
+/* active state */
+input[type="text"]:focus ~ .bar:before, input[type="text"]:focus ~ .bar:after, input[type="password"]:focus ~ .bar:before, input[type="password"]:focus ~ .bar:after {
+  width:50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%; 
+  width:100px; 
+  top:25%; 
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+input[type="text"]:focus ~ .highlight, input[type="password"]:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+	from { background:#68FFDF; }
+  to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+	from { background:#68FFDF; }
+  to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+	from { background:#68FFDF; }
+  to 	{ width:0; background:transparent; }
+}
