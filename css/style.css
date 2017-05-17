@@ -1,3 +1,4 @@
+
 *{
 	padding: 0;
 	margin: 0;
@@ -17,7 +18,7 @@ body{
 }
 
 ::selection {
-    color: white; 
+    color: white;
     background: #00427B;
 }
 
@@ -27,7 +28,7 @@ header ::-moz-selection, section.status ::-moz-selection { /* Code for Firefox *
 }
 
 header ::selection, section.status ::selection {
-    color: white; 
+    color: white;
     background: #68FFDF;
 }
 
@@ -194,9 +195,9 @@ input[type="submit"] {
 }
 
 /* form starting stylings ------------------------------- */
-.group 			  { 
-  position:relative; 
-  margin-bottom:20px; 
+.group 			  {
+  position:relative;
+  margin-bottom:20px;
 }
 input[type="text"], input[type="password"] 				{
   font-size:18px;
@@ -211,17 +212,20 @@ input[type="text"], input[type="password"] 				{
 input:focus 		{ outline:none; }
 
 /* LABEL ======================================= */
-label 				 {
-  color: white; 
+label label.totp				 {
   font-size:18px;
   font-weight:normal;
-  position:absolute;
-  pointer-events:none;
   left:5px;
   top:10px;
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
+}
+
+label.totp 		           {
+  color: white;
+  position:absolute;
+  pointer-events:none;
 }
 
 /* active state */
@@ -230,26 +234,26 @@ input[type="text"]:focus ~ label, input[type="text"]:valid ~ label, input[type="
   left: 0px;
   font-size:14px;
   color:#68FFDF;
-}
+}*/
 
 /* BOTTOM BARS ================================= */
 .bar 	{ position:relative; display:block; width:315px; }
 .bar:before, .bar:after 	{
   content:'';
-  height:2px; 
+  height:2px;
   width:0;
-  bottom:0; 
+  bottom:0;
   position:absolute;
-  background:#68FFDF; 
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
+  background:#68FFDF;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
   -webkit-transition:0.2s ease all;
 }
 .bar:before {
   left:50%;
 }
 .bar:after {
-  right:50%; 
+  right:50%;
 }
 
 /* active state */
@@ -260,9 +264,9 @@ input[type="text"]:focus ~ .bar:before, input[type="text"]:focus ~ .bar:after, i
 /* HIGHLIGHTER ================================== */
 .highlight {
   position:absolute;
-  height:60%; 
-  width:100px; 
-  top:25%; 
+  height:60%;
+  width:100px;
+  top:25%;
   left:0;
   pointer-events:none;
   opacity:0.5;
