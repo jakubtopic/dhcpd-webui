@@ -1,4 +1,4 @@
-<?
+<?php
 	error_reporting(-1);
 	ini_set('display_errors', 'On');
 	include_once "classes/totp.class.php";
@@ -160,11 +160,13 @@
 			$arp = implode("\n", array_slice(explode("\n", shell_exec("sudo arp-scan --interface=".Configuration::getNIC()." --localnet")), 2, -4));
 
 			$arpcache = array();
-			foreach(explode("\n", $arp) as $ar) { 
-				$line = explode("\t", $ar);
-				self::$table[$line[0]] = $line[1];
-				$arpcache[$line[0]]["MAC"] = $line[1];
-				$arpcache[$line[0]]["timestamp"] = time();
+			if ( $arp != "" ) {
+				foreach(explode("\n", $arp) as $ar) {
+					$line = explode("\t", $ar);
+					self::$table[$line[0]] = $line[1];
+					$arpcache[$line[0]]["MAC"] = $line[1];
+					$arpcache[$line[0]]["timestamp"] = time();
+				}
 			}
 
 			Configuration::updateArpCache($arpcache);
@@ -210,23 +212,25 @@
 				 .shell_exec("ifconfig ".Configuration::getNIC()." | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'")
 				 ."</td><td class='on'>".Language::getString()['CONNECTED']."</td><td></td></tr>";
 			$i=0;
-			foreach($this->table as $key => $element){
-				if($i != 0 OR !Configuration::getExcludeFirstHost()) {
-					$hostIP = new IP($element["fixed-address"]);
+			if ( $this->table ) {
+                          foreach($this->table as $key => $element){
+                                  if($i != 0 OR !Configuration::getExcludeFirstHost()) {
+                                          $hostIP = new IP($element["fixed-address"]);
 
-					$out .= "<tr><td>".$element["host"]."</td><td>".$hostIP->getPrettyIP()."</td><td>".$element["hardware ethernet"]."</td>";
-					if(array_key_exists($element["fixed-address"], ArpScan::getTable())) {
-						$this->connectedDevices++;
-						$out .= (ArpScan::getTable()[$element["fixed-address"]] == $element["hardware ethernet"] ? "<td class='on'>"
-							 .Language::getString()['CONNECTED']."</td><td>" : "<td class='off'>".Language::getString()['DISCONNECTED']
-							 ."</td><td><a href='?wake=".$element["hardware ethernet"]."'>".Language::getString()['WAKE_UP']."</a>");
-					} else {
-						$out .= "<td class='off'>".Language::getString()['DISCONNECTED']."</td><td><a href='?wake=".$element["hardware ethernet"]
-							 ."'>".Language::getString()['WAKE_UP']."</a>";
-					}
-					$out .= "</td></tr>\n";
-				}
-			    $i++;
+                                          $out .= "<tr><td>".$element["host"]."</td><td>".$hostIP->getPrettyIP()."</td><td>".$element["hardware ethernet"]."</td>";
+                                          if(array_key_exists($element["fixed-address"], ArpScan::getTable())) {
+                                                  $this->connectedDevices++;
+                                                  $out .= (ArpScan::getTable()[$element["fixed-address"]] == $element["hardware ethernet"] ? "<td class='on'>"
+                                                          .Language::getString()['CONNECTED']."</td><td>" : "<td class='off'>".Language::getString()['DISCONNECTED']
+                                                          ."</td><td><a href='?wake=".$element["hardware ethernet"]."'>".Language::getString()['WAKE_UP']."</a>");
+                                          } else {
+                                                  $out .= "<td class='off'>".Language::getString()['DISCONNECTED']."</td><td><a href='?wake=".$element["hardware ethernet"]
+                                                          ."'>".Language::getString()['WAKE_UP']."</a>";
+                                          }
+                                          $out .= "</td></tr>\n";
+                                  }
+                              $i++;
+                          }
 			}
 
 			return $out;
@@ -274,16 +278,16 @@
 				$starts = new LeaseDatetime($element["starts"]);
 				$ends = new LeaseDatetime($element["ends"]);
 				$hostIP = new IP($element["lease"]);
-
-				$out .= "<tr><td>".(array_key_exists($element["hardware ethernet"], $devices) ? $devices[$element["hardware ethernet"]] : $element["client-hostname"])
+					$out .= "<tr><td>".(array_key_exists($element["hardware ethernet"], $devices) ? $devices[$element["hardware ethernet"]] : $element["client-hostname"])
 					 ."</td><td>".$hostIP->getPrettyIP()."</td><td>".$element["hardware ethernet"]."</td><td>".$starts->getPrettyDate()."</td><td>".$ends->getPrettyDate()."</td>";
-				if(array_key_exists($element["lease"], ArpScan::getTable())) {
-					$this->connectedDevices++;
-					$out .= (ArpScan::getTable()[$element["lease"]] == $element["hardware ethernet"] ? "<td class='on'>".Language::getString()['CONNECTED'] : "<td class='off'>".Language::getString()['DISCONNECTED']);
-				} else {
-					$out .= "<td class='off'>".Language::getString()['DISCONNECTED'];
-				}
+					if(array_key_exists($element["lease"], ArpScan::getTable())) {
+						$this->connectedDevices++;
+						$out .= (ArpScan::getTable()[$element["lease"]] == $element["hardware ethernet"] ? "<td class='on'>".Language::getString()['CONNECTED'] : "<td class='off'>".Language::getString()['DISCONNECTED']);
+                                        } else {
+                                                $out .= "<td class='off'>".Language::getString()['DISCONNECTED'];
+                                        }
 				$out .= "</td></tr>";//<td><a href='?remove=".$element["lease"]."'>".Language::getString()['REVOKE']."</a></td></tr>";
+
 			}
 
 			return $out;
@@ -340,7 +344,7 @@
 		}
 	}
 
-	if((((Configuration::getTOTPsetting() AND $totpResult) OR!Configuration::getTOTPsetting()) AND 
+	if((((Configuration::getTOTPsetting() AND $totpResult) OR!Configuration::getTOTPsetting()) AND
 		((Configuration::getPASSsetting() AND $passResult) OR !Configuration::getPASSsetting()))) {
 		$_SESSION['logged'] = true;
 		$staticAddresses = new StaticAddresses();
@@ -355,46 +359,52 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="theme-color" content="#00325A">
-		<link rel="stylesheet" href="style.css">
+
 		<link href='https://fonts.googleapis.com/css?family=Roboto:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 		<link rel="icon" type="image/png" sizes="192x192" href="images/icon-highres.png">
+
+		<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+
+		<link rel="stylesheet" href="css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="css/style.css">
 	</head>
 	<body>
 		<header>
 			<div class="wrapper">
-				<h1><a href="/"><? echo Configuration::getNetworkName(); ?></a></h1>
+				<h1><a href="/"><?php echo Configuration::getNetworkName(); ?></a></h1>
 			</div>
 		</header>
 		<section class="status">
 			<div class="wrapper">
-				<?
+				<?php
 					if(!$_SESSION['logged']):
 				?>
 				<form action="" method="post">
-					<? if(Configuration::getPASSsetting()): ?>
+					<?php if(Configuration::getPASSsetting()): ?>
 					<div class="group">
 						<input type="password" name="password" required>
 						<span class="highlight"></span>
 						<span class="bar"></span>
-						<label><? echo Language::getString()['ENTER_PASS']; ?></label>
+						<label class="totp"><? echo Language::getString()['ENTER_PASS']; ?></label>
 					</div>
-					<? endif; 
+					<?php endif;
 					if(Configuration::getTOTPsetting()):?>
 					<div class="group">
 						<input type="text" name="totp" maxlength="6" required>
 						<span class="highlight"></span>
 						<span class="bar"></span>
-						<label><? echo Language::getString()['ENTER_TOTP']; ?></label>
+						<label class="totp"><?php echo Language::getString()['ENTER_TOTP']; ?></label>
 					</div>
-					<? endif; ?>
-					<input type="submit" value="<? echo Language::getString()['ENTER_PASS']; ?>">
+					<?php endif; ?>
+					<input type="submit" value="<?php echo Language::getString()['ENTER_PASS']; ?>">
 				</form>
 			</div>
 		</section>
 	</body>
 </html>
-				<? exit; endif; ?>
-				<h2><?
+				<?php exit; endif; ?>
+				<h2><?php
 					$hiddenDevices = $staticAddresses->getConnectedDevices() + $dynamicAddresses->getConnectedDevices();
 					echo Language::getString()['OK_TEXT']
 						 .$wakeMessage."<br>"
@@ -403,43 +413,65 @@
 						 ." "
 						 .Language::getString()['DEVICES']
 						 ."</strong>."
-						 .($hiddenDevices > ArpScan::connectedDevices() ? 
+						 .($hiddenDevices > ArpScan::connectedDevices() ?
 							" ".Language::getString()['WHILE']." <strong>".$hiddenDevices."</strong> ".Language::getString()['HIDDEN'] : "");
 				?></h2>
 			</div>
 		</section>
 		<section class="paper">
 			<div class="wrapper">
-				<h3><? echo Language::getString()['STATIC']; ?></h3>
-				<table>
-					<? 
-						echo "<tr><th>"
+				<h3><?php echo Language::getString()['STATIC']; ?></h3>
+<!-- 				<input type="text" id="searchbox"> -->
+				<table id="static_address" class="display">
+					<?php
+						echo "<thead><tr><th>"
 							 .Language::getString()['DEVICE']
 							 ."</th><th>IP ".Language::getString()['ADDR']
 							 ."</th><th>MAC ".Language::getString()['ADDR']
 							 ."</th><th>".Language::getString()['STATE']
-							 ."</th><th>Wake on LAN</th></tr>";
+							 ."</th><th>Wake on LAN</th></tr></thead><tbody>";
 						echo $staticAddresses->getContent();
+						echo "</tbody>";
 					?>
 				</table>
 			</div>
 		</section>
 		<section class="paper">
 			<div class="wrapper">
-				<h3><? echo Language::getString()['DYNAMIC']; ?></h3>
-				<table>
-					<?
-						echo "<tr><th>".Language::getString()['DEVICE']
+				<h3><?php echo Language::getString()['DYNAMIC']; ?></h3>
+				<table id="dynamic_address" class="display">
+					<?php
+						echo "<thead><tr><th>".Language::getString()['DEVICE']
 							 ."</th><th>IP ".Language::getString()['ADDR']
 							 ."</th><th>MAC ".Language::getString()['ADDR']
 							 ."</th><th>".Language::getString()['START']
 							 ."</th><th>".Language::getString()['END']
 							 ."</th><th>".Language::getString()['STATE']
-							 ."</th></tr>";//<th>".Language::getString()['LEASE']."</th></tr>";"
+							 ."</th></tr></thead><tbody>";//<th>".Language::getString()['LEASE']."</th></tr>";"
 						echo $dynamicAddresses->getContent();
+                                                echo "</tbody>";
 					?>
 				</table>
 			</div>
 		</section>
-	</body>
+
+
+        <script type="text/javascript">
+          $(document).ready(function(){
+            $('#static_address').DataTable(
+              {
+                "filter": true,
+                "bLengthChange": false,
+                "dom": '<"top"if>rt<"bottom"lp><"clear">'
+              }
+            );
+            $('#dynamic_address').DataTable(
+              {
+                "dom": '<"top"if>rt<"bottom"lp><"clear">'
+              }
+            );
+          });
+        </script>
+        </body>
+
 </html>
